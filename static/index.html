@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            font-family: monospace;
+        }
+
+        #info {
+            color: red
+        }
+
+        #info2 {
+            color: green
+        }
+
+        #info3 {
+            color: blue
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.js"></script>
+    <script>
+        window.onload = () => {
+
+            const client = io();
+            //
+            client.on("onclientmessage", (data) => {
+                document.getElementById("info").innerHTML = `moje id = ${data.clientId}`
+            })
+            //mousemove
+
+            window.onmousemove = (e) => {
+                console.log(e.clientX, e.clientY)
+                client.emit("mouseposition", {
+                    posX: e.clientX,
+                    posY: e.clientY
+                })
+
+            }
+
+            client.on("mouseposition", (data) => {
+                console.log(data.posX, data.posY)
+                document.getElementById("info3").innerHTML = JSON.stringify(data, null, 3)
+            })
+
+
+
+            client.on("clients_array", (data) => {
+                document.getElementById("info2").innerHTML = JSON.stringify(data, null, 3)
+            })
+
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <h1>T: socket.io</h1>
+
+    <h2 id="info"></h2>
+
+    <h2>
+        <pre id="info2"></pre>
+    </h2>
+
+    <h2>
+        <pre id="info3"></pre>
+    </h2>
+
+</body>
+
+</html>
